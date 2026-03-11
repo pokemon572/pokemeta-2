@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PokéMeta — Meta Competitivo Standard 2025–26</title>
+<meta name="description" content="Análisis del meta competitivo de Pokémon TCG Standard. Decklists verificadas del EUIC 2026, matchups, tech cards y rotación.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════ */
+:root {
+  --bg:     #05060a;
+  --bg1:    #0a0c12;
+  --bg2:    #0f1118;
+  --bg3:    #151820;
+  --ln:     rgba(255,255,255,.06);
+  --ln2:    rgba(255,255,255,.11);
+  --red:    #e8354a;
+  --red2:   rgba(232,53,74,.12);
+  --gold:   #f2be35;
+  --gold2:  rgba(242,190,53,.10);
+  --cyan:   #17d4d4;
+  --cyan2:  rgba(23,212,212,.08);
+  --green:  #1fd87a;
+  --tx:     #dde4f5;
+  --t2:     #8291b2;
+  --t3:     #49536e;
+  --hs:     'Bebas Neue', sans-serif;
+  --bs:     'Space Grotesk', sans-serif;
+  --mono:   'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+html { scroll-behavior: smooth }
+body {
+  font-family: var(--bs);
+  background: var(--bg);
+  color: var(--tx);
+  overflow-x: hidden;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ── Grain + ambient ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 9999;
+  pointer-events: none; opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+/* ══════════════════════════════════════════
+   NAV
+══════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 58px;
+  background: rgba(5,6,10,.82);
+  backdrop-filter: blur(20px) saturate(1.8);
+  border-bottom: 1px solid var(--ln);
+  display: flex; align-items: center;
+  padding: 0 32px; gap: 20px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--hs); font-size: 24px; letter-spacing: 1px;
+  color: var(--tx); text-decoration: none;
+}
+.nav-ball {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  background: conic-gradient(var(--red) 0 50%, #1a1d28 50%);
+  position: relative;
+  box-shadow: 0 0 16px rgba(232,53,74,.35);
+  animation: spin 20s linear infinite;
+}
+.nav-ball::before {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%); width: 7px; height: 7px;
+  border-radius: 50%; background: var(--bg1); border: 1.5px solid rgba(255,255,255,.2); z-index: 1;
+}
+.nav-ball::after {
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: linear-gradient(180deg,transparent 46%,rgba(255,255,255,.1) 46%,rgba(255,255,255,.1) 54%,transparent 54%);
+}
+@keyframes spin { to { transform: rotate(360deg) } }
+.nav-logo span { color: var(--red) }
+.nav-spacer { flex: 1 }
+.nav-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--t3);
+  padding: 3px 8px; border: 1px solid var(--ln); border-radius: 3px;
+}
+.nav-cta {
+  height: 34px; padding: 0 18px;
+  background: var(--red); color: #fff;
+  border: none; border-radius: 6px;
+  font-family: var(--bs); font-size: 12px; font-weight: 600;
+  cursor: pointer; text-decoration: none;
+  display: flex; align-items: center; gap: 6px;
+  transition: all .18s;
+  box-shadow: 0 0 20px rgba(232,53,74,.3);
+}
+.nav-cta:hover { background: #f03e55; box-shadow: 0 0 30px rgba(232,53,74,.5); transform: translateY(-1px) }
+
+/* ══════════════════════════════════════════
+   HERO
+══════════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 120px 32px 80px;
+  position: relative; overflow: hidden;
+}
+
+/* Grid background */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%);
+}
+
+/* Glows */
+.hero-glow-red {
+  position: absolute; top: -10%; left: -10%;
+  width: 70vw; height: 70vh;
+  background: radial-gradient(ellipse, rgba(232,53,74,.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-glow-cyan {
+  position: absolute; bottom: 0; right: -5%;
+  width: 50vw; height: 60vh;
+  background: radial-gradient(ellipse, rgba(23,212,212,.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.hero-inner {
+  max-width: 1100px; margin: 0 auto; position: relative; z-index: 1;
+}
+
+.hero-eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--red);
+  margin-bottom: 28px;
+  opacity: 0; animation: fadeUp .7s .1s forwards;
+}
+.hero-eyebrow::before {
+  content: ''; width: 32px; height: 1px; background: var(--red);
+}
+
+.hero-h1 {
+  font-family: var(--hs);
+  font-size: clamp(64px, 9vw, 128px);
+  line-height: .95;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  opacity: 0; animation: fadeUp .7s .2s forwards;
+}
+.hero-h1 .line2 {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(226,232,248,.25);
+}
+.hero-h1 .accent { color: var(--red) }
+
+.hero-sub {
+  max-width: 520px;
+  font-size: 16px; color: var(--t2); line-height: 1.7;
+  margin: 28px 0 44px;
+  opacity: 0; animation: fadeUp .7s .3s forwards;
+}
+.hero-sub strong { color: var(--tx) }
+
+.hero-actions {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp .7s .4s forwards;
+}
+.btn-primary {
+  height: 50px; padding: 0 28px;
+  background: var(--red); color: #fff;
+  border: none; border-radius: 8px;
+  font-family: var(--bs); font-size: 14px; font-weight: 600;
+  cursor: pointer; text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+  transition: all .2s;
+  box-shadow: 0 0 28px rgba(232,53,74,.35), 0 4px 16px rgba(0,0,0,.4);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(232,53,74,.5), 0 8px 24px rgba(0,0,0,.4) }
+.btn-ghost {
+  height: 50px; padding: 0 24px;
+  background: transparent; color: var(--t2);
+  border: 1px solid var(--ln2); border-radius: 8px;
+  font-family: var(--bs); font-size: 14px; font-weight: 500;
+  cursor: pointer; text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+  transition: all .2s;
+}
+.btn-ghost:hover { color: var(--tx); border-color: var(--ln2); background: var(--bg2) }
+
+.hero-stats {
+  display: flex; gap: 40px; flex-wrap: wrap;
+  margin-top: 72px;
+  padding-top: 40px;
+  border-top: 1px solid var(--ln);
+  opacity: 0; animation: fadeUp .7s .55s forwards;
+}
+.hstat-n {
+  font-family: var(--hs); font-size: 42px; line-height: 1;
+  color: var(--tx);
+}
+.hstat-n .unit { font-size: 18px; color: var(--t3) }
+.hstat-l { font-family: var(--mono); font-size: 10px; color: var(--t3); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px }
+
+/* Badge */
+.euic-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold2); border: 1px solid rgba(242,190,53,.2);
+  border-radius: 6px; padding: 8px 14px;
+  font-family: var(--mono); font-size: 10px; color: var(--gold);
+  letter-spacing: 1px; text-transform: uppercase;
+  margin-left: auto;
+  opacity: 0; animation: fadeUp .7s .5s forwards;
+}
+.euic-badge::before { content: '🏆'; font-size: 14px }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px) }
+  to   { opacity: 1; transform: translateY(0) }
+}
+
+/* ══════════════════════════════════════════
+   TICKER / MARQUEE
+══════════════════════════════════════════ */
+.ticker-wrap {
+  overflow: hidden; border-top: 1px solid var(--ln); border-bottom: 1px solid var(--ln);
+  background: var(--bg1);
+  padding: 10px 0;
+}
+.ticker {
+  display: flex; gap: 0; white-space: nowrap;
+  animation: ticker 28s linear infinite;
+}
+.ticker-item {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 11px; color: var(--t3);
+  letter-spacing: .5px; padding: 0 32px;
+}
+.ticker-item .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--red); flex-shrink: 0 }
+.ticker-item .hi { color: var(--tx) }
+.ticker-item .gold { color: var(--gold) }
+.ticker-item .cyan { color: var(--cyan) }
+@keyframes ticker { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+
+/* ══════════════════════════════════════════
+   FEATURES
+══════════════════════════════════════════ */
+.section {
+  padding: 100px 32px;
+  max-width: 1100px; margin: 0 auto;
+}
+.section-eyebrow {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--t3); margin-bottom: 14px;
+}
+.section-h2 {
+  font-family: var(--hs); font-size: clamp(36px, 5vw, 64px);
+  line-height: 1; letter-spacing: 1px; margin-bottom: 16px;
+}
+.section-sub { font-size: 15px; color: var(--t2); max-width: 500px; line-height: 1.7 }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1px;
+  background: var(--ln);
+  border: 1px solid var(--ln);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 56px;
+}
+.feat {
+  background: var(--bg1);
+  padding: 28px 26px;
+  position: relative;
+  transition: background .18s;
+}
+.feat:hover { background: var(--bg2) }
+.feat-icon {
+  font-size: 24px; margin-bottom: 14px;
+  display: block;
+}
+.feat-title {
+  font-family: var(--hs); font-size: 22px; letter-spacing: .5px;
+  margin-bottom: 8px; color: var(--tx);
+}
+.feat-desc { font-size: 13px; color: var(--t2); line-height: 1.65 }
+.feat-tag {
+  display: inline-block; margin-top: 14px;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 1px;
+  text-transform: uppercase; padding: 3px 8px;
+  border-radius: 3px; border: 1px solid;
+}
+.feat-tag.red { color: var(--red); border-color: rgba(232,53,74,.3); background: var(--red2) }
+.feat-tag.cyan { color: var(--cyan); border-color: rgba(23,212,212,.25); background: var(--cyan2) }
+.feat-tag.gold { color: var(--gold); border-color: rgba(242,190,53,.25); background: var(--gold2) }
+.feat-tag.green { color: var(--green); border-color: rgba(31,216,122,.25); background: rgba(31,216,122,.08) }
+
+/* ══════════════════════════════════════════
+   META SNAPSHOT — deck cards
+══════════════════════════════════════════ */
+.meta-section { padding: 80px 32px; background: var(--bg1); }
+.meta-inner { max-width: 1100px; margin: 0 auto }
+
+.deck-strip {
+  display: flex; gap: 8px; flex-wrap: nowrap; overflow-x: auto;
+  padding-bottom: 8px; margin-top: 48px;
+  scrollbar-width: thin; scrollbar-color: var(--ln) transparent;
+}
+.deck-card {
+  flex-shrink: 0; width: 200px;
+  background: var(--bg2); border: 1px solid var(--ln);
+  border-radius: 10px; padding: 18px 16px;
+  position: relative; overflow: hidden;
+  transition: transform .18s, border-color .18s;
+  cursor: default;
+}
+.deck-card:hover { transform: translateY(-3px); border-color: var(--ln2) }
+.deck-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.deck-card.s::before { background: linear-gradient(90deg, var(--red), var(--gold)) }
+.deck-card.a::before { background: var(--cyan) }
+.deck-card.b::before { background: var(--t3) }
+.dc-rank {
+  font-family: var(--hs); font-size: 11px; color: var(--t3);
+  letter-spacing: 1px; margin-bottom: 10px;
+}
+.dc-name { font-family: var(--hs); font-size: 18px; line-height: 1.1; margin-bottom: 8px }
+.dc-wr {
+  font-family: var(--hs); font-size: 30px; line-height: 1;
+  color: var(--green); margin-bottom: 4px;
+}
+.dc-usage { font-family: var(--mono); font-size: 10px; color: var(--t3) }
+.dc-tier {
+  position: absolute; top: 14px; right: 12px;
+  font-family: var(--hs); font-size: 13px;
+  padding: 2px 7px; border-radius: 4px;
+}
+.tier-S { background: rgba(232,53,74,.15); color: var(--red) }
+.tier-A { background: rgba(23,212,212,.1); color: var(--cyan) }
+.tier-B { background: rgba(255,255,255,.06); color: var(--t2) }
+.euic-winner { border-color: rgba(242,190,53,.3) }
+.euic-winner::after {
+  content: '🏆 EUIC 2026'; position: absolute; bottom: 12px; right: 8px;
+  font-family: var(--mono); font-size: 8px; color: var(--gold);
+  letter-spacing: .5px;
+}
+
+/* ══════════════════════════════════════════
+   EUIC RESULTS
+══════════════════════════════════════════ */
+.euic-section { padding: 80px 32px }
+.euic-inner { max-width: 1100px; margin: 0 auto }
+.euic-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--ln);
+  border: 1px solid var(--ln); border-radius: 12px; overflow: hidden;
+  margin-top: 48px;
+}
+.euic-row {
+  background: var(--bg1); padding: 16px 20px;
+  display: flex; align-items: center; gap: 16px;
+  transition: background .15s;
+}
+.euic-row:hover { background: var(--bg2) }
+.euic-place {
+  font-family: var(--hs); font-size: 28px;
+  min-width: 44px; text-align: right; color: var(--t3);
+  flex-shrink: 0;
+}
+.euic-place.gold-text { color: var(--gold) }
+.euic-place.silver-text { color: #b0b8c8 }
+.euic-place.bronze-text { color: #c8864a }
+.euic-divider { width: 1px; height: 32px; background: var(--ln2); flex-shrink: 0 }
+.euic-info { flex: 1; min-width: 0 }
+.euic-player { font-size: 13px; font-weight: 600; color: var(--tx) }
+.euic-deck { font-family: var(--mono); font-size: 10px; color: var(--t3); margin-top: 2px }
+
+/* ══════════════════════════════════════════
+   ROTATION CALLOUT
+══════════════════════════════════════════ */
+.rotation-band {
+  background: rgba(232,53,74,.06); border-top: 1px solid rgba(232,53,74,.15); border-bottom: 1px solid rgba(232,53,74,.15);
+  padding: 40px 32px;
+}
+.rotation-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; gap: 40px; flex-wrap: wrap;
+}
+.rot-countdown {
+  font-family: var(--hs); font-size: 72px; line-height: 1; color: var(--red);
+  flex-shrink: 0;
+}
+.rot-info h3 { font-family: var(--hs); font-size: 28px; margin-bottom: 6px }
+.rot-info p { font-size: 13px; color: var(--t2); max-width: 400px; line-height: 1.6 }
+.rot-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px }
+.rot-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 1px;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 3px;
+  border: 1px solid rgba(232,53,74,.3); color: var(--red); background: var(--red2);
+}
+.rot-tag.safe {
+  border-color: rgba(31,216,122,.25); color: var(--green); background: rgba(31,216,122,.08);
+}
+
+/* ══════════════════════════════════════════
+   CTA BOTTOM
+══════════════════════════════════════════ */
+.cta-section {
+  padding: 120px 32px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.cta-section::before {
+  content: ''; position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%,-50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(232,53,74,.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto }
+.cta-h2 { font-family: var(--hs); font-size: clamp(40px, 6vw, 80px); line-height: .95; margin-bottom: 20px }
+.cta-h2 .muted { color: transparent; -webkit-text-stroke: 1px rgba(226,232,248,.2) }
+.cta-p { font-size: 15px; color: var(--t2); margin-bottom: 40px; line-height: 1.65 }
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--ln);
+  padding: 32px;
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.foot-logo { font-family: var(--hs); font-size: 20px; color: var(--t3) }
+.foot-logo span { color: var(--red) }
+.foot-spacer { flex: 1 }
+.foot-note { font-family: var(--mono); font-size: 9px; color: var(--t3); letter-spacing: .5px }
+
+/* ══════════════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════════════ */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .65s, transform .65s }
+.reveal.visible { opacity: 1; transform: none }
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .hero { padding: 100px 20px 60px }
+  .section, .meta-section, .euic-section, .euic-section .euic-inner, .cta-section { padding-left: 20px; padding-right: 20px }
+  .euic-grid { grid-template-columns: 1fr }
+  .hero-stats { gap: 24px }
+  .nav-tag { display: none }
+  .rotation-inner { gap: 20px }
+  .rot-countdown { font-size: 48px }
+  footer { flex-direction: column; align-items: flex-start; gap: 12px }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-ball"></div>
+    Poké<span>Meta</span>
+  </a>
+  <span class="nav-tag">Standard PFL 2025–26</span>
+  <div class="nav-spacer"></div>
+  <a href="pokemon-tcg-builder.html" class="nav-cta" target="_blank">
+    Abrir App →
+  </a>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-glow-red"></div>
+  <div class="hero-glow-cyan"></div>
+  <div class="hero-inner">
+
+    <div class="hero-eyebrow">Meta competitivo verificado — EUIC 2026</div>
+
+    <h1 class="hero-h1">
+      DOMINA<br>
+      <span class="line2">EL META</span><br>
+      <span class="accent">STANDARD</span>
+    </h1>
+
+    <p class="hero-sub">
+      Decklists verificadas del <strong>EUIC 2026</strong> en Londres. Análisis de techs, matchups, mecánicas exactas de cartas y el contador de rotación G-mark de Abril 2026.
+    </p>
+
+    <div class="hero-actions">
+      <a href="pokemon-tcg-builder.html" class="btn-primary" target="_blank">
+        Abrir PokéMeta →
+      </a>
+      <a href="#meta" class="btn-ghost">Ver el meta ↓</a>
+      <div class="euic-badge">Campeón EUIC 2026 — Mega Absol Box</div>
+    </div>
+
+    <div class="hero-stats">
+      <div>
+        <div class="hstat-n">416</div>
+        <div class="hstat-l">Torneos</div>
+      </div>
+      <div>
+        <div class="hstat-n">34<span class="unit">K</span></div>
+        <div class="hstat-l">Jugadores</div>
+      </div>
+      <div>
+        <div class="hstat-n">10</div>
+        <div class="hstat-l">Decks Top Meta</div>
+      </div>
+      <div>
+        <div class="hstat-n">8</div>
+        <div class="hstat-l">Listas EUIC Top 8</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ TICKER ══ -->
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker">
+    <span class="ticker-item"><span class="dot"></span> <span class="hi">Gholdengo/Lunatone</span> 52.36% WR · 9.78% uso</span>
+    <span class="ticker-item"><span class="dot"></span> <span class="gold">🏆 Campeón EUIC — Edwyn Mesman — Mega Absol Box</span></span>
+    <span class="ticker-item"><span class="dot"></span> <span class="hi">Dragapult/Charizard</span> 51.52% WR · 9.68% uso</span>
+    <span class="ticker-item"><span class="dot"></span> <span class="cyan">Rotación G-mark — 10 Abril 2026</span></span>
+    <span class="ticker-item"><span class="dot"></span> <span class="hi">Charizard/Noctowl</span> 52.88% WR — mayor WR del meta</span>
+    <span class="ticker-item"><span class="dot"></span> 4010 jugadores en EUIC 2026 · Londres · 13 Feb 2026</span>
+    <span class="ticker-item"><span class="dot"></span> <span class="hi">Gardevoir ex</span> — Debilidad Darkness ×2 explotada por Charizard ex Tera</span>
+    <span class="ticker-item"><span class="dot"></span> <span class="gold">Dreepy 70HP · Solrock Cosmic Beam 70 · Arven: Item + Pokémon Tool</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item"><span class="dot"></span> <span class="hi">Gholdengo/Lunatone</span> 52.36% WR · 9.78% uso</span>
+    <span class="ticker-item"><span class="dot"></span> <span class="gold">🏆 Campeón EUIC — Edwyn Mesman — Mega Absol Box</span></span>
+    <span class="ticker-item"><span class="dot"></span> <span class="hi">Dragapult/Charizard</span> 51.52% WR · 9.68% uso</span>
+    <span class="ticker-item"><span class="dot"></span> <span class="cyan">Rotación G-mark — 10 Abril 2026</span></span>
+    <span class="ticker-item"><span class="dot"></span> <span class="hi">Charizard/Noctowl</span> 52.88% WR — mayor WR del meta</span>
+    <span class="ticker-item"><span class="dot"></span> 4010 jugadores en EUIC 2026 · Londres · 13 Feb 2026</span>
+    <span class="ticker-item"><span class="dot"></span> <span class="hi">Gardevoir ex</span> — Debilidad Darkness ×2 explotada por Charizard ex Tera</span>
+    <span class="ticker-item"><span class="dot"></span> <span class="gold">Dreepy 70HP · Solrock Cosmic Beam 70 · Arven: Item + Pokémon Tool</span></span>
+  </div>
+</div>
+
+<!-- ══ META SNAPSHOT ══ -->
+<div class="meta-section" id="meta">
+  <div class="meta-inner">
+    <div class="reveal">
+      <div class="section-eyebrow">Top 10 · Standard PFL 2025–26</div>
+      <h2 class="section-h2">EL META HOY</h2>
+      <p class="section-sub">Clasificación por uso y winrate de 416 torneos con 34,611 jugadores. Fuente: LimitlessTCG.</p>
+    </div>
+    <div class="deck-strip reveal">
+
+      <div class="deck-card s euic-winner">
+        <div class="dc-rank">#5 · S TIER</div>
+        <div class="dc-name">Mega Absol Box</div>
+        <div class="dc-wr">48.74%</div>
+        <div class="dc-usage">3.95% uso · Terminal Period</div>
+        <div class="dc-tier tier-S">S</div>
+      </div>
+
+      <div class="deck-card s">
+        <div class="dc-rank">#1 · S TIER</div>
+        <div class="dc-name">Gholdengo / Lunatone</div>
+        <div class="dc-wr">52.36%</div>
+        <div class="dc-usage">9.78% uso · Make it Rain</div>
+        <div class="dc-tier tier-S">S</div>
+      </div>
+
+      <div class="deck-card s">
+        <div class="dc-rank">#2 · S TIER</div>
+        <div class="dc-name">Dragapult / Charizard</div>
+        <div class="dc-wr">51.52%</div>
+        <div class="dc-usage">9.68% uso · Phantom Dive</div>
+        <div class="dc-tier tier-S">S</div>
+      </div>
+
+      <div class="deck-card a">
+        <div class="dc-rank">#4 · A TIER</div>
+        <div class="dc-name">Charizard / Noctowl</div>
+        <div class="dc-wr">52.88%</div>
+        <div class="dc-usage">5.04% uso · Burning Darkness</div>
+        <div class="dc-tier tier-A">A</div>
+      </div>
+
+      <div class="deck-card a">
+        <div class="dc-rank">#3 · A TIER</div>
+        <div class="dc-name">Gardevoir ex</div>
+        <div class="dc-wr">50.20%</div>
+        <div class="dc-usage">5.42% uso · Psychic Embrace</div>
+        <div class="dc-tier tier-A">A</div>
+      </div>
+
+      <div class="deck-card a">
+        <div class="dc-rank">#6 · A TIER</div>
+        <div class="dc-name">Grimmsnarl / Froslass</div>
+        <div class="dc-wr">51.31%</div>
+        <div class="dc-usage">3.24% uso · Freezing Shroud</div>
+        <div class="dc-tier tier-A">A</div>
+      </div>
+
+      <div class="deck-card a">
+        <div class="dc-rank">#9 · A TIER</div>
+        <div class="dc-name">Kangaskhan / Bouffalant</div>
+        <div class="dc-wr">51.66%</div>
+        <div class="dc-usage">3.75% uso · Rapid-Fire Combo</div>
+        <div class="dc-tier tier-A">A</div>
+      </div>
+
+      <div class="deck-card a">
+        <div class="dc-rank">#10 · A TIER</div>
+        <div class="dc-name">Charizard / Pidgeot</div>
+        <div class="dc-wr">47.86%</div>
+        <div class="dc-usage">4.96% uso · Quick Search</div>
+        <div class="dc-tier tier-A">A</div>
+      </div>
+
+      <div class="deck-card b">
+        <div class="dc-rank">#7 · B TIER</div>
+        <div class="dc-name">N's Zoroark</div>
+        <div class="dc-wr">46.38%</div>
+        <div class="dc-usage">3.42% uso · Night Joker</div>
+        <div class="dc-tier tier-B">B</div>
+      </div>
+
+      <div class="deck-card b">
+        <div class="dc-rank">#8 · B TIER</div>
+        <div class="dc-name">Alakazam / Dudunsparce</div>
+        <div class="dc-wr">50.96%</div>
+        <div class="dc-usage">3.92% uso · Future Sight</div>
+        <div class="dc-tier tier-B">B</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ FEATURES ══ -->
+<div style="padding: 80px 32px 0; max-width: 1100px; margin: 0 auto" class="reveal">
+  <div class="section-eyebrow">Herramienta</div>
+  <h2 class="section-h2">QUÉ INCLUYE</h2>
+  <p class="section-sub">Todo lo que necesitás para prepararte para el meta competitivo Standard 2025–26.</p>
+</div>
+<div style="padding: 40px 32px 80px; max-width: 1100px; margin: 0 auto">
+  <div class="features-grid reveal">
+    <div class="feat">
+      <span class="feat-icon">🏆</span>
+      <div class="feat-title">Listas EUIC 2026</div>
+      <p class="feat-desc">Los 60 cards exactos de todos los Top 8 del EUIC 2026 en Londres — verificados contra LimitlessTCG. Edwyn Mesman, Drew Stephenson, Oscar Madsen y más.</p>
+      <span class="feat-tag red">8 listas verificadas</span>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">⚔️</span>
+      <div class="feat-title">Matchups</div>
+      <p class="feat-desc">Tabla completa de matchups con winrates y tips competitivos para cada enfrentamiento del meta. Estrategias específicas por deck.</p>
+      <span class="feat-tag cyan">10×10 matchups</span>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">🔧</span>
+      <div class="feat-title">Tech Cards</div>
+      <p class="feat-desc">Análisis detallado de cada tech card con mecánicas exactas verificadas — HP reales, textos de ataques correctos, interacciones.</p>
+      <span class="feat-tag gold">Mecánicas verificadas</span>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">📋</span>
+      <div class="feat-title">Cartas Legales</div>
+      <p class="feat-desc">Listado completo por set con estado de rotación G-mark (Abril 2026), ACE SPECs actuales y reemplazos post-rotación.</p>
+      <span class="feat-tag red">Rotación 10 Abril</span>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">🎲</span>
+      <div class="feat-title">Simulador de Apertura</div>
+      <p class="feat-desc">Simulá aperturas con cualquiera de los 10 decks del meta. Probabilidades de mano ideal, análisis de mulligans.</p>
+      <span class="feat-tag green">Monte Carlo</span>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">📐</span>
+      <div class="feat-title">Estrategia</div>
+      <p class="feat-desc">Guía de gameplan por deck: qué guardar en el mulligan, cómo cerrar la carrera de premios, quotes de los jugadores que ganaron.</p>
+      <span class="feat-tag cyan">Pro quotes EUIC</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EUIC RESULTS ══ -->
+<div class="euic-section">
+  <div class="euic-inner">
+    <div class="reveal">
+      <div class="section-eyebrow">Londres · 13 Febrero 2026 · 4010 Jugadores</div>
+      <h2 class="section-h2">EUIC 2026</h2>
+      <p class="section-sub">Resultados Top 8 del European International Championship 2026. Todos los decklists disponibles en la app.</p>
+    </div>
+    <div class="euic-grid reveal">
+      <div class="euic-row">
+        <div class="euic-place gold-text">1°</div>
+        <div class="euic-divider"></div>
+        <div class="euic-info">
+          <div class="euic-player">Edwyn Mesman</div>
+          <div class="euic-deck">Mega Absol Box · Terminal Period</div>
+        </div>
+      </div>
+      <div class="euic-row">
+        <div class="euic-place silver-text">2°</div>
+        <div class="euic-divider"></div>
+        <div class="euic-info">
+          <div class="euic-player">Drew Stephenson</div>
+          <div class="euic-deck">Gholdengo / Lunatone · Make it Rain</div>
+        </div>
+      </div>
+      <div class="euic-row">
+        <div class="euic-place bronze-text">3°</div>
+        <div class="euic-divider"></div>
+        <div class="euic-info">
+          <div class="euic-player">Daichi Tamai</div>
+          <div class="euic-deck">Mega Absol Box · Terminal Period</div>
+        </div>
+      </div>
+      <div class="euic-row">
+        <div class="euic-place bronze-text">4°</div>
+        <div class="euic-divider"></div>
+        <div class="euic-info">
+          <div class="euic-player">Liam Halliburton</div>
+          <div class="euic-deck">N's Zoroark · Night Joker</div>
+        </div>
+      </div>
+      <div class="euic-row">
+        <div class="euic-place">5°</div>
+        <div class="euic-divider"></div>
+        <div class="euic-info">
+          <div class="euic-player">Makani Tran</div>
+          <div class="euic-deck">Gardevoir ex · Psychic Embrace</div>
+        </div>
+      </div>
+      <div class="euic-row">
+        <div class="euic-place">6°</div>
+        <div class="euic-divider"></div>
+        <div class="euic-info">
+          <div class="euic-player">Christian LaBella</div>
+          <div class="euic-deck">N's Zoroark · Night Joker</div>
+        </div>
+      </div>
+      <div class="euic-row">
+        <div class="euic-place">7°</div>
+        <div class="euic-divider"></div>
+        <div class="euic-info">
+          <div class="euic-player">Oscar Madsen</div>
+          <div class="euic-deck">Dragapult / Charizard ex · Phantom Dive</div>
+        </div>
+      </div>
+      <div class="euic-row">
+        <div class="euic-place">8°</div>
+        <div class="euic-divider"></div>
+        <div class="euic-info">
+          <div class="euic-player">Jackson Ford</div>
+          <div class="euic-deck">Charizard / Noctowl / Pidgeot / Dusknoir</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROTATION ══ -->
+<div class="rotation-band reveal">
+  <div class="rotation-inner">
+    <div class="rot-countdown" id="days-left">35d</div>
+    <div class="rot-info">
+      <h3>ROTACIÓN G-MARK</h3>
+      <p>El 10 de Abril de 2026 rotan todos los sets con marca G: SVI, PAL, OBF, MEW, PAR, PAF. Arven, Iono, Nest Ball, SER y Toedscruel desaparecen del formato.</p>
+      <div class="rot-tags">
+        <span class="rot-tag">SVI rota</span>
+        <span class="rot-tag">PAL rota</span>
+        <span class="rot-tag">OBF rota</span>
+        <span class="rot-tag">MEW rota</span>
+        <span class="rot-tag">PAR rota</span>
+        <span class="rot-tag">PAF rota</span>
+        <span class="rot-tag safe">TEF safe</span>
+        <span class="rot-tag safe">TWM safe</span>
+        <span class="rot-tag safe">MEG safe</span>
+        <span class="rot-tag safe">JTG safe</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CTA ══ -->
+<div class="cta-section">
+  <div class="cta-inner reveal">
+    <h2 class="cta-h2">
+      PREPARATE<br>
+      <span class="muted">PARA GANAR</span>
+    </h2>
+    <p class="cta-p">Todos los datos del meta verificados, las listas exactas del EUIC 2026 y el análisis que necesitás antes de tu próximo torneo.</p>
+    <a href="pokemon-tcg-builder.html" class="btn-primary" target="_blank" style="margin: 0 auto; display: inline-flex">
+      Abrir PokéMeta — es gratis →
+    </a>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="foot-logo">Poké<span>Meta</span></div>
+  <div class="foot-spacer"></div>
+  <div class="foot-note">Datos: LimitlessTCG · EUIC 2026 · Standard PFL 2025–26</div>
+  <div class="foot-note" style="margin-left:20px">No afiliado con The Pokémon Company</div>
+</footer>
+
+<script>
+// ── Countdown to rotation ──
+const rotDate = new Date('2026-04-10');
+const now = new Date();
+const diff = Math.ceil((rotDate - now) / (1000*60*60*24));
+const el = document.getElementById('days-left');
+if (el && diff > 0) el.textContent = diff + 'd';
+else if (el) el.textContent = 'YA';
+
+// ── Scroll reveal ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target) } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
